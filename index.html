@@ -3,13 +3,18 @@
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-  <title>EdgeIQ AI — Firebase Quant Lab</title>
-  
+  <title>EdgeIQ AI — Quantitative Trading Research Lab</title>
+
+  <!-- Favicon EdgeIQ SVG Vector -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230B0F17'/%3E%3Cpath d='M6 22 L12 12 L18 17 L26 8' stroke='%2306B6D4' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Ccircle cx='26' cy='8' r='3' fill='%2310B981'/%3E%3Ccircle cx='12' cy='12' r='2' fill='%238B5CF6'/%3E%3C/svg%3E">
+
+  <!-- Fonts: Inter, JetBrains Mono, Lao, Thai -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Lao:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
 
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -18,6 +23,7 @@
         extend: {
           colors: {
             "surface": "#0B0F17",
+            "surface-container-lowest": "#070A10",
             "surface-container-low": "#111726",
             "surface-container": "#161F33",
             "surface-container-high": "#1E2942",
@@ -26,131 +32,327 @@
             "primary": "#06B6D4",
             "secondary": "#10B981",
             "tertiary": "#8B5CF6",
-            "error": "#F43F5E"
+            "error": "#F43F5E",
+            "warning": "#F59E0B"
           }
         }
       }
     };
   </script>
-
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="bg-surface text-on-surface flex flex-col min-h-screen">
 
-  <!-- Header -->
+  <!-- TOP APP HEADER -->
   <header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl border-b border-surface-container-high/60">
     <div class="h-14 px-4 max-w-5xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary text-[22px]">insights</span>
-        <span class="font-bold text-sm tracking-tight">EdgeIQ AI</span>
-        <span class="text-[10px] text-warning font-mono px-1.5 py-0.5 bg-warning/10 rounded flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-warning"></span> FIREBASE LIVE
+        <div class="w-8 h-8 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary font-bold">
+          <span class="material-symbols-outlined text-[20px]">insights</span>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="font-bold text-sm tracking-tight">EdgeIQ AI</span>
+            <span class="text-[10px] text-primary font-mono font-semibold px-1 bg-primary/10 rounded">RESEARCH LAB</span>
+          </div>
+          <span class="text-[9px] font-mono text-secondary flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span> STATISTICAL RIGOR ON
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant border border-surface-container">
+          Session: <strong class="text-primary font-bold">BT-001 (v2.0)</strong>
         </span>
       </div>
-      <div class="text-xs font-mono text-on-surface-variant">BT-001 • Strategy V2.0</div>
     </div>
   </header>
 
-  <!-- Main Views Container -->
+  <!-- MAIN VIEWPORT -->
   <main class="flex-1 w-full max-w-5xl mx-auto pt-16 pb-24 px-4">
 
-    <!-- 1. DASHBOARD VIEW -->
+    <!-- ================= 1. DASHBOARD VIEW ================= -->
     <section id="view-dashboard" class="space-y-4 pt-2">
-      <div class="p-4 rounded-xl bg-surface-container-low border border-surface-container-high/60 flex justify-between items-center">
+      <!-- Strategy Health Header -->
+      <div class="p-4 rounded-xl bg-surface-container-low border border-surface-container-high/60 flex flex-wrap justify-between items-center gap-4">
         <div>
-          <div class="text-[10px] font-mono text-on-surface-variant uppercase">ຄາດຫວັງສຸທິ / Expected Value (EV)</div>
+          <div class="text-[10px] font-mono text-on-surface-variant uppercase tracking-wider">Strategy Realized Expectancy (EV)</div>
           <div id="stat-expectancy" class="text-3xl font-bold font-mono text-secondary">+0.00R</div>
+          <div class="text-[11px] font-mono text-on-surface-variant mt-0.5">Expectancy = (Win% × AvgWin) - (Loss% × AvgLoss)</div>
         </div>
         <div class="text-right">
-          <div class="text-[10px] font-mono text-on-surface-variant uppercase">ກຳໄລລວມ / Cumulative R</div>
-          <div id="stat-total-r" class="text-xl font-bold font-mono text-primary">+0.0R</div>
+          <div class="text-[10px] font-mono text-on-surface-variant uppercase tracking-wider">Net Compound Payoff</div>
+          <div id="stat-total-r" class="text-2xl font-bold font-mono text-primary">+0.0R</div>
+          <span class="text-[10px] text-secondary font-mono bg-secondary/10 px-2 py-0.5 rounded">Positive Alpha Profile</span>
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-3">
+      <!-- Core Performance 4-Grid (Section 33) -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div class="p-3 rounded-xl bg-surface-container-low border border-surface-container-high/60">
-          <span class="text-[10px] font-mono text-on-surface-variant uppercase">ໄມ້ເທຣດທັງໝົດ / Total</span>
+          <span class="text-[10px] font-mono text-on-surface-variant uppercase">Total Trades</span>
           <div id="stat-total-trades" class="text-xl font-bold font-mono mt-1">0</div>
+          <div class="text-[10px] font-mono text-on-surface-variant mt-0.5">Sample Size (N)</div>
         </div>
         <div class="p-3 rounded-xl bg-surface-container-low border border-surface-container-high/60">
-          <span class="text-[10px] font-mono text-on-surface-variant uppercase">ອັດຕາວິນ / Win Rate</span>
+          <span class="text-[10px] font-mono text-on-surface-variant uppercase">Win Rate</span>
           <div id="stat-win-rate" class="text-xl font-bold font-mono text-secondary mt-1">0%</div>
+          <div id="stat-win-loss-count" class="text-[10px] font-mono text-on-surface-variant mt-0.5">0W / 0L</div>
         </div>
+        <div class="p-3 rounded-xl bg-surface-container-low border border-surface-container-high/60">
+          <span class="text-[10px] font-mono text-on-surface-variant uppercase">Profit Factor</span>
+          <div id="stat-profit-factor" class="text-xl font-bold font-mono text-primary mt-1">0.00</div>
+          <div class="text-[10px] font-mono text-secondary mt-0.5">Gross Win / Gross Loss</div>
+        </div>
+        <div class="p-3 rounded-xl bg-surface-container-low border border-surface-container-high/60">
+          <span class="text-[10px] font-mono text-on-surface-variant uppercase">Max Losing Streak</span>
+          <div id="stat-max-streak" class="text-xl font-bold font-mono text-error mt-1">0</div>
+          <div class="text-[10px] font-mono text-on-surface-variant mt-0.5">Drawdown Guardrail</div>
+        </div>
+      </div>
+
+      <!-- Top Edge Patterns (Section 17, 18, 34) -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-secondary text-[18px]">verified</span>
+            <h2 class="text-xs font-bold uppercase font-mono tracking-wider">Top Edge Patterns (Ranked by Expectancy)</h2>
+          </div>
+          <span class="text-[10px] font-mono text-on-surface-variant">No Win-Rate-Only Bias</span>
+        </div>
+        <div id="top-patterns-container" class="space-y-2.5">
+          <!-- Rendered dynamically via app.js -->
+        </div>
+      </div>
+
+      <!-- Capital Leaks / Loss Patterns (Section 21, 35) -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-error text-[18px]">warning</span>
+            <h2 class="text-xs font-bold uppercase font-mono tracking-wider text-error">Capital Leaks & Pitfalls</h2>
+          </div>
+          <span class="text-[10px] font-mono text-error">Negative Expectancy</span>
+        </div>
+        <div id="loss-patterns-container" class="space-y-2.5">
+          <!-- Rendered dynamically via app.js -->
+        </div>
+      </div>
+
+      <!-- Overfitting & Philosophy Notice (Section 28, 50, 52) -->
+      <div class="p-3 rounded-xl bg-surface-container-low/60 border border-surface-container-high text-xs text-on-surface-variant space-y-1">
+        <div class="flex items-center gap-1 text-primary font-mono font-semibold">
+          <span class="material-symbols-outlined text-[15px]">info</span>
+          <span>Core System Philosophy (Section 50 & 52)</span>
+        </div>
+        <p class="text-[11px] leading-relaxed">
+          ລະບົບນີ້ບໍ່ໄດ້ຮັບປະກັນຜົນກຳໄລໃນອະນາຄົດ. ຄ່າສະຖິຕິທັງໝົດຄິດໄລ່ຈາກປະຫວັດການເທຣດຕົວຈິງ ເພື່ອຊ່ວຍຕັດສິນໃຈຢ່າງມີວິໄນ ແລະ ປ້ອງກັນ Overfitting.
+        </p>
       </div>
     </section>
 
-    <!-- 2. JOURNAL VIEW -->
+    <!-- ================= 2. JOURNAL VIEW ================= -->
     <section id="view-journal" class="hidden space-y-4 pt-2">
-      <div class="flex items-center justify-between border-b border-surface-container-high pb-2">
-        <h2 class="text-sm font-bold uppercase font-mono">ປະຫວັດການເທຣດ (Firebase Live Feed)</h2>
+      <div class="flex flex-col sm:flex-row gap-2 justify-between items-start sm:items-center border-b border-surface-container-high pb-2">
+        <div>
+          <h2 class="text-sm font-bold uppercase font-mono">Trade Journal Feed</h2>
+          <span class="text-[11px] text-on-surface-variant font-mono">Real-time Cloud Firestore Synchronized</span>
+        </div>
+        <div class="flex gap-2">
+          <input id="trade-filter-input" type="text" placeholder="Filter symbol, session..." class="bg-surface-container-low border border-surface-container-high rounded-lg px-2.5 py-1 text-xs font-mono text-on-surface focus:outline-none">
+        </div>
       </div>
-      <div id="trade-list-container" class="space-y-3"></div>
+      <div id="trade-list-container" class="space-y-3">
+        <!-- Rendered dynamically via app.js -->
+      </div>
     </section>
 
-    <!-- 3. ADD TRADE VIEW -->
+    <!-- ================= 3. ADD TRADE VIEW (4-Layer Flow) ================= -->
     <section id="view-add-trade" class="hidden space-y-4 pt-2">
-      <form id="new-trade-form" class="p-4 rounded-xl bg-surface-container-low border border-surface-container-high/60 space-y-3">
-        <h3 class="text-sm font-bold font-mono text-primary">ບັນທຶກໄມ້ເທຣດໃໝ່ (New Trade Profile)</h3>
+      <form id="new-trade-form" class="space-y-4">
         
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="text-[10px] font-mono uppercase text-on-surface-variant">Symbol</label>
-            <input id="input-symbol" type="text" value="XAUUSD" class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs font-mono" required>
+        <!-- LAYER A: Raw Execution Parameters -->
+        <div class="p-4 rounded-xl bg-surface-container-low border border-surface-container-high/60 space-y-3">
+          <div class="flex items-center justify-between border-b border-surface-container-high/40 pb-2">
+            <span class="text-xs font-bold font-mono text-primary uppercase tracking-wider">Layer A — Raw Trade Data</span>
+            <span class="text-[10px] font-mono text-on-surface-variant">Immutable Execution Record</span>
           </div>
-          <div>
-            <label class="text-[10px] font-mono uppercase text-on-surface-variant">Direction</label>
-            <select id="input-direction" class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs font-mono">
-              <option value="LONG">LONG</option>
-              <option value="SHORT">SHORT</option>
-            </select>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div>
+              <label class="text-[10px] font-mono uppercase text-on-surface-variant">Symbol</label>
+              <input id="input-symbol" type="text" value="XAUUSD" class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs font-mono font-bold" required>
+            </div>
+            <div>
+              <label class="text-[10px] font-mono uppercase text-on-surface-variant">Direction</label>
+              <select id="input-direction" class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs font-mono text-secondary font-bold">
+                <option value="LONG">LONG</option>
+                <option value="SHORT">SHORT</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-mono uppercase text-on-surface-variant">Timeframe</label>
+              <select id="input-tf" class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs font-mono">
+                <option value="M5">M5</option>
+                <option value="M15" selected>M15</option>
+                <option value="H1">H1</option>
+                <option value="H4">H4</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-mono uppercase text-on-surface-variant">Market Session</label>
+              <select id="input-session" class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs font-mono">
+                <option value="London">London</option>
+                <option value="New York" selected>New York</option>
+                <option value="Asian">Asian</option>
+                <option value="Overlap">London/NY Overlap</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2.5 pt-1">
+            <div>
+              <label class="text-[10px] font-mono uppercase text-on-surface-variant">Entry Price</label>
+              <input id="input-entry" type="number" step="0.01" value="2342.50" class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs font-mono" required>
+            </div>
+            <div>
+              <label class="text-[10px] font-mono uppercase text-error">Stop Loss</label>
+              <input id="input-sl" type="number" step="0.01" value="2337.50" class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs font-mono" required>
+            </div>
+            <div>
+              <label class="text-[10px] font-mono uppercase text-secondary">Take Profit</label>
+              <input id="input-tp" type="number" step="0.01" value="2358.50" class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs font-mono" required>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5 pt-1">
+            <div>
+              <label class="text-[10px] font-mono uppercase text-on-surface-variant">Realized Result (R)</label>
+              <input id="input-rr" type="number" step="0.1" value="3.2" class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs font-mono font-bold text-secondary" required>
+            </div>
+            <div>
+              <label class="text-[10px] font-mono uppercase text-on-surface-variant">Outcome</label>
+              <select id="input-outcome" class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs font-mono font-bold">
+                <option value="WIN">WIN</option>
+                <option value="LOSS">LOSS</option>
+                <option value="BE">BREAK EVEN</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="text-[10px] font-mono uppercase text-on-surface-variant">Timeframe</label>
-            <input id="input-tf" type="text" value="15m" class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs font-mono" required>
+        <!-- LAYER B: User Observation (Section 3) -->
+        <div class="p-4 rounded-xl bg-surface-container-low border border-surface-container-high/60 space-y-3">
+          <div class="flex items-center justify-between border-b border-surface-container-high/40 pb-2">
+            <span class="text-xs font-bold font-mono text-tertiary uppercase tracking-wider">Layer B — User Observation</span>
+            <span class="text-[10px] font-mono text-on-surface-variant">What did YOU see?</span>
           </div>
+
+          <div class="flex flex-wrap gap-1.5" id="user-tags-container">
+            <button type="button" class="tag-btn active px-2.5 py-1 rounded bg-primary/20 text-primary border border-primary/40 text-xs font-mono" data-tag="HTF Trend">HTF Trend</button>
+            <button type="button" class="tag-btn active px-2.5 py-1 rounded bg-primary/20 text-primary border border-primary/40 text-xs font-mono" data-tag="EMA Retest">EMA Retest</button>
+            <button type="button" class="tag-btn px-2.5 py-1 rounded bg-surface-container text-on-surface-variant text-xs font-mono border border-transparent" data-tag="Fib 61.8">Fib 61.8</button>
+            <button type="button" class="tag-btn active px-2.5 py-1 rounded bg-primary/20 text-primary border border-primary/40 text-xs font-mono" data-tag="Liquidity Sweep">Liquidity Sweep</button>
+            <button type="button" class="tag-btn px-2.5 py-1 rounded bg-surface-container text-on-surface-variant text-xs font-mono border border-transparent" data-tag="Bullish Engulfing">Bullish Engulfing</button>
+            <button type="button" class="tag-btn px-2.5 py-1 rounded bg-surface-container text-on-surface-variant text-xs font-mono border border-transparent" data-tag="Breakout">Breakout</button>
+          </div>
+
           <div>
-            <label class="text-[10px] font-mono uppercase text-on-surface-variant">Result (R)</label>
-            <input id="input-rr" type="number" step="0.1" value="2.0" class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs font-mono" required>
+            <label class="text-[10px] font-mono uppercase text-on-surface-variant block mb-1">Why did you take this trade? (Optional)</label>
+            <textarea id="input-notes" rows="2" placeholder="e.g., Asian low swept into 15m order block + EMA50 dynamic confluence..." class="w-full bg-surface-container border border-surface-container-high rounded p-2.5 text-xs text-on-surface placeholder:text-outline focus:outline-none"></textarea>
           </div>
         </div>
 
-        <div>
-          <label class="text-[10px] font-mono uppercase text-on-surface-variant">User Observation & Reasons</label>
-          <textarea id="input-notes" rows="2" placeholder="ເຫດຜົນການເຂົ້າອໍເດີ..." class="w-full bg-surface-container border border-surface-container-high rounded p-2 text-xs"></textarea>
+        <!-- LAYER C & D: AI Verification & Real-time Edge Support (Section 24, 25, 49) -->
+        <div id="ai-decision-support" class="p-4 rounded-xl bg-gradient-to-br from-surface-container-high via-surface-container-low to-surface-container border border-primary/30 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-primary text-[18px]">neurology</span>
+              <span class="text-xs font-bold font-mono text-on-surface uppercase">AI Trade Quality Score (0–100)</span>
+            </div>
+            <span id="calculated-score" class="text-base font-bold font-mono text-primary">85/100</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+            <div class="p-2 rounded bg-surface-container">
+              <span class="text-[10px] text-on-surface-variant block">Historical Similarity</span>
+              <span id="hist-matches" class="text-secondary font-bold">Matching Historical Setups...</span>
+            </div>
+            <div class="p-2 rounded bg-surface-container">
+              <span class="text-[10px] text-on-surface-variant block">Evidence Level</span>
+              <span id="hist-evidence" class="text-primary font-bold">Reliable (Sample N &gt; 30)</span>
+            </div>
+          </div>
         </div>
 
-        <button type="submit" id="btn-save-analyze" class="w-full py-3 rounded-xl bg-primary text-surface font-bold text-xs uppercase font-mono shadow-md">
-          Commit Trade & Run AI Engine
+        <!-- Submit Button -->
+        <button type="submit" id="btn-save-analyze" class="w-full py-3.5 rounded-xl bg-primary text-surface font-bold text-xs uppercase font-mono shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">biotech</span>
+          <span>Commit Trade &amp; Run Statistical Engine</span>
         </button>
       </form>
     </section>
 
+    <!-- ================= 4. PATTERNS VIEW ================= -->
+    <section id="view-patterns" class="hidden space-y-4 pt-2">
+      <div class="flex items-center justify-between border-b border-surface-container-high pb-2">
+        <h2 class="text-sm font-bold uppercase font-mono">Discovered Patterns Matrix</h2>
+        <span class="text-[10px] font-mono text-secondary">Anti-Overfitting Rules Active</span>
+      </div>
+      <div id="all-patterns-feed" class="space-y-3"></div>
+    </section>
+
+    <!-- ================= 5. TRADE DETAIL VIEW (3 Perspectives) ================= -->
+    <section id="view-trade-detail" class="hidden space-y-4 pt-2">
+      <div class="flex items-center justify-between border-b border-surface-container-high pb-2">
+        <button type="button" onclick="window.switchView('journal')" class="flex items-center gap-1 text-xs font-mono text-primary hover:underline">
+          <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+          <span>Back to Journal</span>
+        </button>
+        <span id="detail-trade-id" class="text-xs font-mono text-on-surface-variant">Trade ID: #---</span>
+      </div>
+
+      <!-- Segmented Tab Bar (Section 48: User Saw vs AI Saw vs Truth) -->
+      <div class="grid grid-cols-3 gap-1 bg-surface-container p-1 rounded-xl text-xs font-mono text-center">
+        <button type="button" id="btn-tab-user" onclick="switchDetailPerspective('user')" class="py-1.5 rounded-lg bg-surface-container-high text-primary font-bold">1. Trader Saw</button>
+        <button type="button" id="btn-tab-ai" onclick="switchDetailPerspective('ai')" class="py-1.5 rounded-lg text-on-surface-variant">2. AI Vision</button>
+        <button type="button" id="btn-tab-truth" onclick="switchDetailPerspective('truth')" class="py-1.5 rounded-lg text-on-surface-variant">3. Market Truth</button>
+      </div>
+
+      <div id="detail-content-user" class="p-4 rounded-xl bg-surface-container-low border border-surface-container-high space-y-2"></div>
+      <div id="detail-content-ai" class="hidden p-4 rounded-xl bg-surface-container-low border border-surface-container-high space-y-2"></div>
+      <div id="detail-content-truth" class="hidden p-4 rounded-xl bg-surface-container-low border border-surface-container-high space-y-2"></div>
+    </section>
+
   </main>
 
-  <!-- Bottom Navigation -->
+  <!-- BOTTOM BAR NAVIGATION -->
   <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/95 backdrop-blur-xl border-t border-surface-container-high">
     <div class="flex items-center justify-around h-14 max-w-md mx-auto">
-      <button onclick="switchView('dashboard')" class="nav-item text-primary font-bold flex flex-col items-center" data-target="dashboard">
+      <button type="button" onclick="switchView('dashboard')" class="nav-item text-primary font-bold flex flex-col items-center" data-target="dashboard">
         <span class="material-symbols-outlined text-[20px]">grid_view</span>
         <span class="text-[9px] font-mono mt-0.5">Dash</span>
       </button>
 
-      <button onclick="switchView('journal')" class="nav-item text-on-surface-variant flex flex-col items-center" data-target="journal">
+      <button type="button" onclick="switchView('journal')" class="nav-item text-on-surface-variant flex flex-col items-center" data-target="journal">
         <span class="material-symbols-outlined text-[20px]">menu_book</span>
         <span class="text-[9px] font-mono mt-0.5">Journal</span>
       </button>
 
-      <button onclick="switchView('add-trade')" class="w-10 h-10 -top-2 relative rounded-xl bg-primary text-surface flex items-center justify-center shadow-lg" data-target="add-trade">
+      <button type="button" onclick="switchView('add-trade')" class="w-10 h-10 -top-2 relative rounded-xl bg-primary text-surface flex items-center justify-center shadow-lg" data-target="add-trade">
         <span class="material-symbols-outlined text-[22px]">add</span>
+      </button>
+
+      <button type="button" onclick="switchView('patterns')" class="nav-item text-on-surface-variant flex flex-col items-center" data-target="patterns">
+        <span class="material-symbols-outlined text-[20px]">hub</span>
+        <span class="text-[9px] font-mono mt-0.5">Patterns</span>
       </button>
     </div>
   </nav>
 
-  <!-- Entry Script (ES Modules) -->
+  <!-- SCRIPTS -->
   <script type="module" src="app.js"></script>
 </body>
 </html>
