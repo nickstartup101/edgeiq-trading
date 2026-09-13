@@ -12,28 +12,11 @@
   .pt-safe { padding-top: env(safe-area-inset-top, 16px); }
 }
 
-/* ເຊື່ອງ Scrollbar ແຕ່ເລື່ອນໄດ້ */
 ::-webkit-scrollbar {
   display: none;
 }
 
-/* ຕົວເລກ tabular ບໍ່ໃຫ້ສັ່ນເວລາປ່ຽນແປງ */
 .tnum {
   font-variant-numeric: tabular-nums;
   font-family: 'JetBrains Mono', monospace;
-}
-
-/* Glassmorphism & Borders */
-.glass-panel {
-  background-color: rgba(17, 23, 38, 0.85);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(30, 41, 59, 0.6);
-}
-
-.edge-glow-cyan {
-  box-shadow: 0 0 16px rgba(6, 182, 212, 0.25);
-}
-
-.edge-glow-green {
-  box-shadow: 0 0 16px rgba(16, 185, 129, 0.25);
 }
